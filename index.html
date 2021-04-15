@@ -179,6 +179,7 @@
   <div class="row">
     <div class="column">
       <h2>Directory: </h2>
+      <button type="button" class="btn btn-outline-primary btn-sm mb-1" id="expand">Collapse List</button>
       <div class="tree" id="list" style="margin-right: 2%;"></div>
     </div>
     <div class="column">
@@ -199,6 +200,7 @@
 </body>
 <script>
   'use strict';
+  let collapse = true; // toggles the expand or collapse logic
 
   /** Checks if Elemetn has a class
      * @param {Element} element DOM Element
@@ -224,11 +226,9 @@
       if (hasClass(element, 'visible')) {
         element.classList.remove('visible');
         element.classList.add('invisible');
-
       } else {
         element.classList.remove('invisible');
         element.classList.add('visible');
-
       }
     });
     if (parent.querySelector('span').title === 'Expand this branch') {
@@ -308,10 +308,10 @@
       if (ul) {
         ul.forEach(element => {
           element.parentElement.classList.add('parent_li');
-          element.parentElement.querySelector('span').title = 'Expand this branch';
+          element.parentElement.querySelector('span').title = 'Collapse this branch';
           const i = document.createElement('i');
           i.classList.add('material-icons');
-          i.innerText = 'add';
+          i.innerText = 'remove';
           i.classList.add('mr-2');
           element.parentElement.querySelector('span').prepend(i);
           element.parentElement.querySelector('span').addEventListener('click', toggleRow);
@@ -336,8 +336,17 @@
           'link': 'https://github.com/microsoft/vscode'
         },
         {
-          'text': 'TensorFlow',
-          'link': 'https://github.com/tensorflow/tensorflow'
+          'text': 'Hashicorp',
+          'nodes': [
+            {
+              'text': 'Vagrant',
+              'link': 'https://github.com/hashicorp/vagrant'
+            },
+            {
+              'text': 'Terraform',
+              'link': 'https://github.com/hashicorp/terraform'
+            }
+          ]
         },
         {
           'text': 'Linux',
@@ -408,6 +417,32 @@
     }
 
   });
+
+  document.getElementById("expand").addEventListener("click", function () {
+
+    // updates display property for each element
+    const li = Array.from(document.querySelectorAll(".tree ul > li ul > li"));
+    li.forEach(element => {
+      if (collapse) {
+        element.classList.add("invisible")
+        element.classList.remove("visible");
+      } else {
+        element.classList.remove("invisible");
+        element.classList.add("visible")
+      }
+    });
+
+    // updates plus and minus signs
+    const material = Array.from(document.querySelectorAll(".tree li > span > i"));
+    material.forEach(element => {
+      if (hasClass(element, "material-icons")) {
+        element.innerText = collapse ? 'add' : 'remove';
+        element.parentElement.title = collapse ? 'Expand this branch' : 'Collapse this branch';
+      }
+    });
+    document.getElementById("expand").innerText = collapse ? "Expand List" : "Collapse List";
+    collapse = !collapse;
+  })
 </script>
 
 </html>
